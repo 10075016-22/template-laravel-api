@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->id();
             $table->string('module');
-            $table->string('descrition');
+            $table->string('description');
             $table->string('icon');
             $table->string('name');
             $table->unsignedInteger('order');
-            $table->unsignedTinyInteger('status');
+            $table->unsignedTinyInteger('status')->default(1);
             $table->unsignedBigInteger('permission_id');
             $table->timestamps();
 

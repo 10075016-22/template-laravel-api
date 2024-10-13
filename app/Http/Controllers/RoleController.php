@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Module;
+use App\Models\HeadersTable;
+use App\Models\Table;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
-class ModuleController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,10 +15,28 @@ class ModuleController extends Controller
     public function index()
     {
         try {
-            $modules = Module::get();
-            return response()->json($modules);
+            $roles = Role::get();
+            return response()->json($roles);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+        }
+    }
+
+    public function gridIndex(Request $request) 
+    {
+        try {
+            $params = $request->query();
+            $table = Table::whereId($params['nIdTable'])->first() ?? (Object) [];
+            $headers = HeadersTable::whereTableId($params['nIdTable'])->orderBy('order')->get();
+            $data = Role::get();
+
+            return response()->json([
+                'data'  => $data,
+                'tabla' => $table,
+                'headers' => $headers
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([]);
         }
     }
 
@@ -26,10 +46,10 @@ class ModuleController extends Controller
     public function store(Request $request)
     {
         try {
-            $module = Module::create($request->all());
+            $role = Role::create($request->all());
             return response()->json([
                 'message' => 'The record has been successfully created',
-                'data' => $module
+                'data' => $role
             ]);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
@@ -42,8 +62,8 @@ class ModuleController extends Controller
     public function show(string $id)
     {
         try {
-            $modules = Module::whereId($id)->get();
-            return response()->json($modules);
+            $roles = Role::whereId($id)->get();
+            return response()->json($roles);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
         }
@@ -55,10 +75,10 @@ class ModuleController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $module = Module::whereId($id)->update($request->all());
+            $role = Role::whereId($id)->update($request->all());
             return response()->json([
                 'message' => 'The record has been successfully updated',
-                'data' => $module
+                'data' => $role
             ]);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
@@ -68,13 +88,15 @@ class ModuleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Module $module)
+    public function destroy(string $id)
     {
         try {
-            $module->delete();
+            $role = Role::find($id);
+
+            $role->delete();
             return response()->json([ 'message' => 'The record has been successfully deleted' ]);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return response()->json([ 'message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
         }
     }
 }

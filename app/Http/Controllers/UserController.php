@@ -142,7 +142,10 @@ class UserController extends Controller
 
             $role = Role::find($request->role_id);
             $user->assignRole($role);
-            return response()->json(['message' => 'User has been successfully created'], 200);
+            return response()->json([
+                'message' => 'User has been successfully created',
+                'data' => $user
+            ]);
 
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage().$th->getMessage()], 500);

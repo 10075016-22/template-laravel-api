@@ -1,0 +1,21 @@
+{
+	"id": "77a2a4b5-77a5-4888-ba8a-4d2d72358c02",
+	"name": "laravel-template-api",
+	"values": [
+		{
+			"key": "url",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2024-10-13T04:50:04.141Z",
+	"_postman_exported_using": "Postman/11.16.1"
+}

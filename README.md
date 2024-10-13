@@ -66,3 +66,23 @@ php artisan serve
 ```
 
 ## API Documentation
+
+### Postman
+To perform various queries to the API endpoints, you can use the following .json files:
+
+- [Collections](./documentation/postman/api.json)
+- [Environment](./documentation/postman/environment.json)
+
+If you're unsure how to use these JSON files, please refer to this guide: [Importing and exporting Overview](https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-and-exporting-overview/)
+
+The goal is to import both the collection and the environment to enable you to conduct different tests more efficiently.
+
+For the login endpoint, the following script is added:
+
+```js
+// post-response
+var data =  pm.response.json();
+pm.environment.set ("token", data['access_token']);
+```
+
+This script allows you to save the session token, enabling you to access all endpoints that require authentication.
