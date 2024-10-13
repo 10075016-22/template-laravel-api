@@ -1,5 +1,13 @@
 # Template API usign Laravel V. 11
 
+## Integrated technologies
+
+This api has the following integrated technologies
+
+- [Laravel 11](https://laravel.com/docs/11.x/releases)
+- [Laravel-permission](https://spatie.be/docs/laravel-permission/v6/introduction)
+- [JWT-Authentication](https://github.com/tymondesigns/jwt-auth)
+
 ## Setting Up the Project
 
 1. Run the following command to install the project dependencies using Composer:
