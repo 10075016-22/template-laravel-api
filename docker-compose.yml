@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: unless-stopped
+    ports:
+      - "9090:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - naafar_db
+    networks:
+      - laravel-network
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: naafar_db
+      DB_PORT: 3306
+      DB_DATABASE: naafar
+      DB_USERNAME: laravel_user
+      DB_PASSWORD: laravel_password
+
+  naafar_db:
+    image: mysql:8.0
+    container_name: naafar_db
+    restart: unless-stopped
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_DATABASE: naafar
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - laravel-network
+    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+
+networks:
+  laravel-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

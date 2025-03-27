@@ -14,8 +14,6 @@ Route::post('/login', [UserController::class, 'authenticate']);
 // Grouping usign jwt middleware
 Route::middleware([JwtMiddleware::class])->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
-
-
     // services
     Route::group(['prefix' => 'v1'], function() {
 
