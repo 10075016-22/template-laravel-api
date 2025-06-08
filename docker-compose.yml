@@ -12,20 +12,20 @@ services:
     volumes:
       - .:/var/www/html
     depends_on:
-      - naafar_db
+      - laravel_db
     networks:
       - laravel-network
     environment:
       DB_CONNECTION: mysql
-      DB_HOST: naafar_db
+      DB_HOST: laravel_db
       DB_PORT: 3306
       DB_DATABASE: naafar
       DB_USERNAME: laravel_user
       DB_PASSWORD: laravel_password
 
-  naafar_db:
+  laravel_db:
     image: mysql:8.0
-    container_name: naafar_db
+    container_name: laravel_db
     restart: unless-stopped
     ports:
       - "3309:3306"
