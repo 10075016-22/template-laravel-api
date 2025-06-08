@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Obtener la IP del contenedor de MySQL
-MYSQL_IP=$(getent hosts naafar_db | awk '{ print $1 }')
+MYSQL_IP=$(getent hosts laravel_db | awk '{ print $1 }')
 echo "IP de MySQL: $MYSQL_IP"
 
 # Crear archivo .env si no existe
