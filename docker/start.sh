@@ -42,5 +42,8 @@ php artisan storage:link
 chown -R www-data:www-data /var/www/html
 chmod -R 755 /var/www/html/storage
 
+# Iniciar Supervisor para gestionar los workers de cola
+/usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+
 # Iniciar Apache
 apache2-foreground
