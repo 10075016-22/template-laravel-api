@@ -31,6 +31,10 @@ COPY . /var/www/html
 # Copy Apache configuration
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 
+# Configure Supervisor
+RUN mkdir -p /var/log/supervisor
+COPY docker/supervisor/laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
+
 # Enable Apache modules
 RUN a2enmod rewrite
 
