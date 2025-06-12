@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Interface\ResponseClass;
 use App\Models\HeadersTable;
 use App\Models\Table;
 use Illuminate\Http\Request;
@@ -9,6 +10,12 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    protected $response;
+    public function __construct(ResponseClass $response)
+    {
+        $this->response = $response;
+    }
+    
     /**
      * Display a listing of the resource.
      */
@@ -16,9 +23,9 @@ class RoleController extends Controller
     {
         try {
             $roles = Role::get();
-            return response()->json($roles);
+            return $this->response->success($roles);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -30,7 +37,7 @@ class RoleController extends Controller
             $headers = HeadersTable::whereTableId($params['nIdTable'])->orderBy('order')->get();
             $data = Role::get();
 
-            return response()->json([
+            return $this->response->success([
                 'data'  => $data,
                 'tabla' => $table,
                 'headers' => $headers
@@ -47,12 +54,9 @@ class RoleController extends Controller
     {
         try {
             $role = Role::create($request->all());
-            return response()->json([
-                'message' => 'The record has been successfully created',
-                'data' => $role
-            ]);
+            return $this->response->success($role);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -63,9 +67,9 @@ class RoleController extends Controller
     {
         try {
             $roles = Role::whereId($id)->get();
-            return response()->json($roles);
+            return $this->response->success($roles);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -76,27 +80,26 @@ class RoleController extends Controller
     {
         try {
             $role = Role::whereId($id)->update($request->all());
-            return response()->json([
-                'message' => 'The record has been successfully updated',
-                'data' => $role
-            ]);
+            return $this->response->success($role);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         try {
             $role = Role::find($id);
-
+            if (!$role) {
+                return $this->response->error('The record does not exist');
+            }
             $role->delete();
-            return response()->json([ 'message' => 'The record has been successfully deleted' ]);
+            return $this->response->success([]);
         } catch (\Throwable $th) {
-            return response()->json([ 'message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 }

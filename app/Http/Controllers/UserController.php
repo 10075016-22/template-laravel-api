@@ -83,7 +83,7 @@ class UserController extends Controller
             $users = User::withRole()->get();
             return $this->response->success($users);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred'], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -117,10 +117,7 @@ class UserController extends Controller
             $user = User::withRole()->find($id);
             return $this->response->success($user);
         } catch (\Throwable $th) {
-            return $this->response->success([
-                'message' => 'An error has occurred', 
-                'error' => $th->getMessage()
-            ], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -149,7 +146,7 @@ class UserController extends Controller
             return $this->response->success($user);
 
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage().$th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -190,10 +187,7 @@ class UserController extends Controller
             }
             return $this->response->success($user);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'An error has occurred', 
-                'error' => $th->getMessage()
-            ], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -209,7 +203,7 @@ class UserController extends Controller
                 return $this->response->notFound("User not found");
             }
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -228,7 +222,7 @@ class UserController extends Controller
 
             return $this->response->success([]);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -238,7 +232,7 @@ class UserController extends Controller
             JWTAuth::parseToken()->invalidate(); // Invalida el token actualmente en uso
             return $this->response->success([]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to logout'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->response->error('Failed to logout');
         }
     }
 

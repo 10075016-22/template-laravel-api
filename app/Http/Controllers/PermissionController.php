@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Interface\ResponseClass;
 use App\Models\HeadersTable;
 use App\Models\Table;
 use Illuminate\Http\Request;
@@ -9,6 +10,12 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
+    protected $response;
+    public function __construct(ResponseClass $response)
+    {
+        $this->response = $response;
+    }
+    
     /**
      * Display a listing of the resource.
      */
@@ -16,9 +23,9 @@ class PermissionController extends Controller
     {
         try {
             $permissions = Permission::get();
-            return response()->json($permissions);
+            return $this->response->success($permissions);
         } catch (\Throwable $th) {
-            return response()->json([ 'message' => 'An error has occurred', 'error' => $th->getMessage() ], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -30,7 +37,7 @@ class PermissionController extends Controller
             $headers = HeadersTable::whereTableId($params['nIdTable'])->orderBy('order')->get();
             $data = Permission::get();
 
-            return response()->json([
+            return $this->response->success([
                 'data'  => $data,
                 'tabla' => $table,
                 'headers' => $headers
@@ -47,12 +54,9 @@ class PermissionController extends Controller
     {
         try {
             $permissions = Permission::create($request->all());
-            return response()->json([
-                'message' => 'The record has been successfully created',
-                'data' => $permissions
-            ]);
+            return $this->response->success($permissions);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -63,9 +67,9 @@ class PermissionController extends Controller
     {
         try {
             $permissions = Permission::whereId($id)->get();
-            return response()->json($permissions);
+            return $this->response->success($permissions);
         } catch (\Throwable $th) {
-            return response()->json([ 'message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -76,12 +80,9 @@ class PermissionController extends Controller
     {
         try {
             $permission = Permission::whereId($id)->update($request->all());
-            return response()->json([
-                'message' => 'The record has been successfully updated',
-                'data' => $permission
-            ]);
+            return $this->response->success($permission);
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 
@@ -92,10 +93,13 @@ class PermissionController extends Controller
     {
         try {
             $permission = Permission::find($id);
+            if (!$permission) {
+                return $this->response->notFound('Permission not found');
+            }
             $permission->delete();
-            return response()->json([ 'message' => 'The record has been successfully deleted' ]);
+            return $this->response->success([]);
         } catch (\Throwable $th) {
-            return response()->json([ 'message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
+            return $this->response->error('An error has occurred');
         }
     }
 }
