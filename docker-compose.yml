@@ -19,7 +19,7 @@ services:
       DB_CONNECTION: mysql
       DB_HOST: laravel_db
       DB_PORT: 3306
-      DB_DATABASE: naafar
+      DB_DATABASE: laravel_database
       DB_USERNAME: laravel_user
       DB_PASSWORD: laravel_password
 
@@ -30,7 +30,7 @@ services:
     ports:
       - "3309:3306"
     environment:
-      MYSQL_DATABASE: naafar
+      MYSQL_DATABASE: laravel_database
       MYSQL_USER: laravel_user
       MYSQL_PASSWORD: laravel_password
       MYSQL_ROOT_PASSWORD: root_password

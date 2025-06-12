@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Interface\ResponseClass;
 use App\Models\HeadersTable;
 use App\Models\Table;
 use App\Models\User;
@@ -16,6 +17,12 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
+    protected $response;
+    public function __construct(ResponseClass $response)
+    {
+        $this->response = $response;
+    }
+    
     public function authenticate(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -46,7 +53,7 @@ class UserController extends Controller
         $oUser->access_token = $token;
         // $oUser->aParametros = ParametroController::getAll();
 
-        return response()->json($oUser);
+        return $this->response->success($oUser);
     }
 
     public function getAuthenticatedUser()
@@ -74,7 +81,7 @@ class UserController extends Controller
     {
         try {
             $users = User::withRole()->get();
-            return response()->json($users);
+            return $this->response->success($users);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred'], 500);
         }
@@ -88,7 +95,7 @@ class UserController extends Controller
             $headers = HeadersTable::whereTableId($params['nIdTable'])->orderBy('order')->get();
             $users = User::withRole()->withTrashed()->get();
 
-            return response()->json([
+            return $this->response->success([
                 'data'  => $users,
                 'tabla' => $table,
                 'headers' => $headers
@@ -108,12 +115,9 @@ class UserController extends Controller
     {
         try {
             $user = User::withRole()->find($id);
-            return response()->json([
-                'message' => 'User found', 
-                'data' => $user ?? []
-            ]);
+            return $this->response->success($user);
         } catch (\Throwable $th) {
-            return response()->json([
+            return $this->response->success([
                 'message' => 'An error has occurred', 
                 'error' => $th->getMessage()
             ], 500);
@@ -142,10 +146,7 @@ class UserController extends Controller
 
             $role = Role::find($request->role_id);
             $user->assignRole($role);
-            return response()->json([
-                'message' => 'User has been successfully created',
-                'data' => $user
-            ]);
+            return $this->response->success($user);
 
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage().$th->getMessage()], 500);
@@ -187,7 +188,7 @@ class UserController extends Controller
                 $role = Role::find($request->role_id);
                 $user->assignRole($role);
             }
-            return response()->json(['message' => 'The registry has been successfully updated', 'user' => $user]);
+            return $this->response->success($user);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'An error has occurred', 
@@ -203,9 +204,9 @@ class UserController extends Controller
             $usuario = User::withTrashed()->find($id);
             if($usuario) {
                 $usuario->restore();
-                return response()->json(['message' => 'The user has been successfully activated']);
+                return $this->response->success($usuario);
             } else {
-                return response()->json(['message' => 'User not found']);
+                return $this->response->notFound("User not found");
             }
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
@@ -225,7 +226,7 @@ class UserController extends Controller
 
             if($usuario) $usuario->delete();
 
-            return response()->json(['message' => 'deleted user successfully']);
+            return $this->response->success([]);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error has occurred', 'error' => $th->getMessage()], 500);
         }
@@ -235,7 +236,7 @@ class UserController extends Controller
         try {
             $user = Auth::user();
             JWTAuth::parseToken()->invalidate(); // Invalida el token actualmente en uso
-            return response()->json(['message' => 'Successfully logged out'], Response::HTTP_OK);
+            return $this->response->success([]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to logout'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
