@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('forms_tables', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('table_id');
+            $table->unsignedBigInteger('type_field_id')->nullable(); // tipo de campo, por ejemplo: texto, número, fecha, etc.
             $table->string("field_name");
             $table->string("label");
             $table->unsignedInteger("size")->comment("Indicamos el tamaño del campo en el formulario teniendo en cuenta 1-12 según la grid");
@@ -27,6 +28,7 @@ return new class extends Migration
 
             $table->timestamps();
             $table->foreign('table_id')->references('id')->on('tables');
+            $table->foreign('type_field_id')->references('id')->on('type_fields');
         });
     }
 

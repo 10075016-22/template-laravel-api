@@ -2,26 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Interface\ResponseClass;
+use App\Models\FormsTable;
+use App\Models\HeadersTable;
 use App\Models\Table;
 use Illuminate\Http\Request;
 
 class TableController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $response;
+    public function __construct(ResponseClass $response)
+    {
+        $this->response = $response;
+    }
+    
+    
     public function index()
     {
-        //
+        try {
+            $configuration = Table::with(['headers' => function($query) {
+                $query->with(['type_field'])
+                      ->orderBy('order');
+            }])->get();
+
+            return $this->response->success($configuration);
+        } catch (\Throwable $th) {
+            return $this->response->error('Ha ocurrido un error');
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -34,17 +43,50 @@ class TableController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Table $table)
+    public function show($id)
     {
-        //
+        try {
+            $configuration = Table::whereId($id)->with(['headers' => function($query) {
+                $query->with(['type_field'])
+                      ->orderBy('order');
+            }])->get();
+
+            return $this->response->success($configuration);
+        } catch (\Throwable $th) {
+            return $this->response->error('Ha ocurrido un error');
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Table $table)
+    public function getHeaders($id) {
+        try {
+            $configuration = HeadersTable::whereTableId($id)->with(['type_field'])->orderBy('order')->get();
+            return $this->response->success($configuration);
+        } catch (\Throwable $th) {
+            return $this->response->error('Ha ocurrido un error');
+        }
+    }
+
+    public function getTable($id) {
+        try {
+            $configuration = Table::find($id);
+            if(!$configuration) {
+                return $this->response->notFound('No existe el registro');
+            }
+            return $this->response->success($configuration);
+        } catch (\Throwable $th) {
+            return $this->response->error('Ha ocurrido un error '.$th->getMessage());
+        }
+    }
+
+    public function getForm($id) 
     {
-        //
+        try {
+            $data = FormsTable::with(['type_field'])->whereTableId($id)->orderBy('order')->get();
+
+            return $this->response->success($data);            
+        } catch (\Throwable $th) {
+            return $this->response->error('Ha ocurrido un error al obtener el formulario');
+        }
     }
 
     /**

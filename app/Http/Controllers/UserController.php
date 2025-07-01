@@ -104,7 +104,34 @@ class UserController extends Controller
             return response()->json([]);
         }
     }
+    
+    public function indexDatatable(Request $request) 
+    {
+        try {
+            $params = $request->query();
 
+            if(isset($params['page']) && isset($params['limit'])) {
+                $page  = max(1, intval($params['page']));
+                $limit = max(1, intval($params['limit']));
+                $offset = ($page - 1) * $limit;
+
+                $data = User::orderBy('id', 'DESC')
+                    ->offset($offset)
+                    ->limit($limit)
+                    ->get();
+            } else {
+                $data = User::orderBy('id', 'DESC')->get();
+            }
+
+            $total = User::count();
+            return $this->response->success([
+                'data'  => $data,
+                'total' => $total
+            ]);
+        } catch (\Throwable $th) {
+            return $this->response->error('Ha ocurrido un error');
+        }
+    }
     /**
      * Display the specified resource.
      *
